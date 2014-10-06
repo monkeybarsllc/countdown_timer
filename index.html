@@ -2,14 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>DownCount Plugin</title>
+    <title>MonkeyBars Timer</title>
     <style type="text/css">
-            @import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400);
-
             body {
-                background: #363f48;
+                background-color: #363f48;
                 color: white;
-                font: normal 12px 'Open Sans', sans-serif;
+                font: normal 12px sans-serif;
                 margin-top: 20px;
             }
 
@@ -101,9 +99,28 @@
             #start:hover {
                 background-color: #f32916;
             }
+
+            h1, h2, #next {
+                text-align: center;
+                color: #fff;
+            }
+            h1 {
+                font-size: 40px;
+                margin-bottom: 5px;
+            }
+            h2 {
+                font-weight: normal;
+                color: #fff;
+                font-size: 25px;
+            }
+            #next {
+                font-style: italic;
+            }
     </style>
 </head>
 <body>
+    <h1 id="header">Welcome</h1>
+    <h2 id="subtitle"> </h2>
     <ul class="countdown">
         <li>
             <span class="minutes">00</span>
@@ -116,6 +133,8 @@
         </li>
     </ul>
 
+    <p id="next"></p>
+
     <a href="#" id="start">Start Timer</a>
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -123,14 +142,88 @@
 
     <script type="text/javascript">
         // time of each session in seconds
-        var sessions = [6*60, 5*60, 12*60, 90, 12*60, 5*60, 3*60, 5*60, 15*60, 5*60, 12*60, 10*60, 4*60, 15*60, 12*60, 3*60, 12*60, 5*60, 10*60, 4*60, 5*60, 25*60],
+        var sessions = [10*60, 90, 90, 90, 90, 5*60, 3*60, 3*60, 3*60, 3*60, 90, 3*60, 3*60, 3*60, 3*60, 5*60, 3*60, 5*60, 15*60, 5*60, 12*60, 10*60, 4*60, 15*60, 4*60, 12*60, 3*60, 12*60, 5*60, 10*60, 4*60, 5*60, 25*60],
+            titles = [
+                "Introduction",
+                "Get to know your team members",
+                "Get to know your team members",
+                "Get to know your team members",
+                "Get to know your team members",
+                "Choose your prompt",
+                "Interviews",
+                "Interviews",
+                "Interviews",
+                "Interviews",
+                "Reflect on the previous interviews",
+                "Dig deeper",
+                "Dig deeper",
+                "Dig deeper",
+                "Dig deeper",
+                "Needs and insights",
+                "Needs and insights",
+                "Needs and insights",
+                "Problem statement",
+                "Sketches",
+                "Idea aggregation",
+                "Lightning bolt",
+                "Build a prototype",
+                "Testing",
+                "Incorporate the feedback",
+                "BREAK!!!",
+                "Let's go to an exotic place",
+                "Discover a parallel space",
+                "Sketches",
+                "Idea aggregation",
+                "Lightning bolt and prototype upgrades",
+                "Testing",
+                "Incorporate the feedback",
+                "Lightning bolt upgrade",
+                "Presentation preparation"
+            ],
+            subtitles = [
+                " ",
+                "Partner 1",
+                "Partner 2",
+                "Partner 3",
+                "Partner 4",
+                "Individual & team work",
+                "Partner 1",
+                "Partner 2",
+                "Partner 3",
+                "Partner 4",
+                "Individual",
+                "Partner 1",
+                "Partner 2",
+                "Partner 3",
+                "Partner 4",
+                "Individual",
+                "Team work",
+                "Individual",
+                "Team work",
+                "Individual",
+                "Team work",
+                "Team work",
+                "Team work",
+                "Team work",
+                "Team work",
+                " ",
+                "Team work",
+                "Individual OR team work",
+                "Individual",
+                "Team work",
+                "Team work",
+                "Team work",
+                "Team work",
+                "Team work",
+                "Team work"
+            ],
             timestamps = [],
             lastTime = new Date();
 
         // Create Date objects
         for (i = 0; i < sessions.length; i++) {
             var t = new Date(lastTime.getTime());
-            t.setSeconds(t.getSeconds() + sessions[i]);
+            t.setSeconds(t.getSeconds() + sessions[i] + 2);
             timestamps.push(t);
             lastTime = t;
         }
@@ -139,16 +232,44 @@
             if (i >= timestamps.length)
                 return;
 
+            $("#header").text(titles[i]);
+            $("#subtitle").text(subtitles[i]);
+            if (i + 1 < titles.length)
+                $('#next').html("<b>Up next:</b> " + titles[i + 1]);
+
             var t = timestamps[i];
             $('.countdown').downCount({
                 date: (t.getMonth() + 1) + "/" + t.getDate() + "/" + t.getFullYear() + " " + t.getHours() + ":" + t.getMinutes() + ":" + t.getSeconds(),
                 offset: t.getTimezoneOffset() / 60 * -1
             }, function () {
-                setCountdown(i + 1);
+                playAlert();
+                $("body").css("background-color", "#fff");
+                setTimeout(function() {
+                    $("body").css("background-color", "#363f48");
+                    setTimeout(function() {
+                        $("body").css("background-color", "#fff");
+                        setTimeout(function() {
+                            $("body").css("background-color", "#363f48");
+                            setCountdown(i + 1);
+                        }, 250);
+                    }, 250);
+                }, 250);
             });
         }
 
         $("#start").click(function() { setCountdown(0); $(this).fadeOut(); return false;});
+
+        function playAlert() {
+            if (window.HTMLAudioElement) {
+              var snd = new Audio('');
+               
+              if(snd.canPlayType('audio/mp3')) {
+                snd = new Audio('alert.mp3');
+              }
+               
+              snd.play();
+            }
+        }
     </script>
 </body>
 </html>
