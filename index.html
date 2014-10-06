@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DownCount Plugin</title>
+    <style type="text/css">
+            @import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400);
+
+            body {
+                background: #363f48;
+                color: white;
+                font: normal 12px 'Open Sans', sans-serif;
+                margin-top: 20px;
+            }
+
+            ul.countdown {
+                list-style: none;
+                margin: 75px 0;
+                padding: 0;
+                display: block;
+                text-align: center;
+            }
+
+            ul.countdown li {
+                display: inline-block;
+            }
+
+            ul.countdown li span {
+                font-size: 120px;
+                font-weight: 300;
+                line-height: 80px;
+            }
+
+            ul.countdown li.seperator {
+                font-size: 120px;
+                line-height: 70px;
+                vertical-align: top;
+            }
+
+            ul.countdown li p {
+                color: #a7abb1;
+                font-size: 20px;
+            }
+
+            a {
+                color: #76949F;
+                text-decoration: none;
+            }
+
+            a:hover {
+                text-decoration: underline;
+            }
+
+            .source {
+                width: 405px;
+                margin: 0 auto;
+                background: #4f5861;
+                color: #a7abb1;
+                font-weight: bold;
+                display: block;
+                white-space: pre;
+                -webkit-border-radius: 3px;
+                   -moz-border-radius: 3px;
+                        border-radius: 3px;
+            }
+
+            .btn {
+                background: #f56c4c;
+                margin: 40px auto;
+                padding: 12px;
+                display: block;
+                width: 100px;
+                color: white;
+                text-align: center;
+                text-transform: uppercase;
+                font-weight: bold;
+                text-decoration: none;
+                -webkit-border-radius: 2px;
+                   -moz-border-radius: 2px;
+                        border-radius: 2px;
+            }
+
+            .btn:hover {
+                text-decoration: none;
+                opacity: .7;
+            }
+
+            #start {
+                text-align: center;
+                margin: 0 auto;
+                display: block;
+                padding: 10px;
+                background-color: #cb1b0b;
+                border-radius: 5px;
+                width: 200px;
+                color: #fff;
+                font-weight: bold;
+                font-size: 30px;
+                text-decoration: none;
+            }
+            #start:hover {
+                background-color: #f32916;
+            }
+    </style>
+</head>
+<body>
+    <ul class="countdown">
+        <li>
+            <span class="minutes">00</span>
+            <p class="minutes_ref">minutes</p>
+        </li>
+        <li class="seperator">:</li>
+        <li>
+            <span class="seconds">00</span>
+            <p class="seconds_ref">seconds</p>
+        </li>
+    </ul>
+
+    <a href="#" id="start">Start Timer</a>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="jquery.downCount.js"></script>
+
+    <script type="text/javascript">
+        // time of each session in seconds
+        var sessions = [6*60, 5*60, 12*60, 90, 12*60, 5*60, 3*60, 5*60, 15*60, 5*60, 12*60, 10*60, 4*60, 15*60, 12*60, 3*60, 12*60, 5*60, 10*60, 4*60, 5*60, 25*60],
+            timestamps = [],
+            lastTime = new Date();
+
+        // Create Date objects
+        for (i = 0; i < sessions.length; i++) {
+            var t = new Date(lastTime.getTime());
+            t.setSeconds(t.getSeconds() + sessions[i]);
+            timestamps.push(t);
+            lastTime = t;
+        }
+
+        function setCountdown(i) {
+            if (i >= timestamps.length)
+                return;
+
+            var t = timestamps[i];
+            $('.countdown').downCount({
+                date: (t.getMonth() + 1) + "/" + t.getDate() + "/" + t.getFullYear() + " " + t.getHours() + ":" + t.getMinutes() + ":" + t.getSeconds(),
+                offset: t.getTimezoneOffset() / 60 * -1
+            }, function () {
+                setCountdown(i + 1);
+            });
+        }
+
+        $("#start").click(function() { setCountdown(0); $(this).fadeOut(); return false;});
+    </script>
+</body>
+</html>
