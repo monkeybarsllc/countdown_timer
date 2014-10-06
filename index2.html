@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MonkeyBars Timer</title>
+    <style type="text/css">
+            body {
+                background-color: #363f48;
+                color: white;
+                font: normal 12px sans-serif;
+                margin-top: 20px;
+            }
+
+            ul.countdown {
+                list-style: none;
+                margin: 75px 0;
+                padding: 0;
+                display: block;
+                text-align: center;
+            }
+
+            ul.countdown li {
+                display: inline-block;
+            }
+
+            ul.countdown li span {
+                font-size: 120px;
+                font-weight: 300;
+                line-height: 80px;
+            }
+
+            ul.countdown li.seperator {
+                font-size: 120px;
+                line-height: 70px;
+                vertical-align: top;
+            }
+
+            ul.countdown li p {
+                color: #a7abb1;
+                font-size: 20px;
+            }
+
+            a {
+                color: #76949F;
+                text-decoration: none;
+            }
+
+            a:hover {
+                text-decoration: underline;
+            }
+
+            .source {
+                width: 405px;
+                margin: 0 auto;
+                background: #4f5861;
+                color: #a7abb1;
+                font-weight: bold;
+                display: block;
+                white-space: pre;
+                -webkit-border-radius: 3px;
+                   -moz-border-radius: 3px;
+                        border-radius: 3px;
+            }
+
+            .btn {
+                background: #f56c4c;
+                margin: 40px auto;
+                padding: 12px;
+                display: block;
+                width: 100px;
+                color: white;
+                text-align: center;
+                text-transform: uppercase;
+                font-weight: bold;
+                text-decoration: none;
+                -webkit-border-radius: 2px;
+                   -moz-border-radius: 2px;
+                        border-radius: 2px;
+            }
+
+            .btn:hover {
+                text-decoration: none;
+                opacity: .7;
+            }
+
+            #start {
+                text-align: center;
+                margin: 0 auto;
+                display: block;
+                padding: 10px;
+                background-color: #cb1b0b;
+                border-radius: 5px;
+                width: 200px;
+                color: #fff;
+                font-weight: bold;
+                font-size: 30px;
+                text-decoration: none;
+            }
+            #start:hover {
+                background-color: #f32916;
+            }
+
+            h1, h2, #next {
+                text-align: center;
+                color: #fff;
+            }
+            h1 {
+                font-size: 40px;
+                margin-bottom: 5px;
+            }
+            h2 {
+                font-weight: normal;
+                color: #fff;
+                font-size: 25px;
+            }
+            #next {
+                font-style: italic;
+            }
+    </style>
+</head>
+<body>
+    <h1 id="header">Welcome</h1>
+    <h2 id="subtitle"> </h2>
+    <ul class="countdown">
+        <li>
+            <span class="minutes">00</span>
+            <p class="minutes_ref">minutes</p>
+        </li>
+        <li class="seperator">:</li>
+        <li>
+            <span class="seconds">00</span>
+            <p class="seconds_ref">seconds</p>
+        </li>
+    </ul>
+
+    <p id="next"></p>
+
+    <a href="#" id="start">Start Timer</a>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="jquery.downCount.js"></script>
+
+    <script type="text/javascript">
+        // time of each session in seconds
+        var sessions = [
+                4*60, 
+                12*60, 
+                3*60, 
+                12*60, 
+                5*60, 
+                10*60, 
+                4*60, 
+                5*60, 
+                25*60
+            ],
+            titles = [
+                "Let's go to an exotic place",
+                "Discover a parallel space",
+                "Sketches",
+                "Idea aggregation",
+                "Lightning bolt and prototype upgrades",
+                "Testing",
+                "Incorporate the feedback",
+                "Lightning bolt upgrade",
+                "Presentation preparation"
+            ],
+            subtitles = [
+                "Team work",
+                "Individual OR team work",
+                "Individual",
+                "Team work",
+                "Team work",
+                "Team work",
+                "Team work",
+                "Team work",
+                "Team work"
+            ],
+            timestamps = [],
+            lastTime = new Date();
+
+        // Create Date objects
+        for (i = 0; i < sessions.length; i++) {
+            var t = new Date(lastTime.getTime());
+            t.setSeconds(t.getSeconds() + sessions[i] + 2);
+            timestamps.push(t);
+            lastTime = t;
+        }
+
+        function setCountdown(i) {
+            if (i >= timestamps.length)
+                return;
+
+            $("#header").text(titles[i]);
+            $("#subtitle").text(subtitles[i]);
+            if (i + 1 < titles.length)
+                $('#next').html("<b>Up next:</b> " + titles[i + 1]);
+
+            var t = timestamps[i];
+            $('.countdown').downCount({
+                date: (t.getMonth() + 1) + "/" + t.getDate() + "/" + t.getFullYear() + " " + t.getHours() + ":" + t.getMinutes() + ":" + t.getSeconds(),
+                offset: t.getTimezoneOffset() / 60 * -1
+            }, function () {
+                playAlert();
+                $("body").css("background-color", "#fff");
+                setTimeout(function() {
+                    $("body").css("background-color", "#363f48");
+                    setTimeout(function() {
+                        $("body").css("background-color", "#fff");
+                        setTimeout(function() {
+                            $("body").css("background-color", "#363f48");
+                            setCountdown(i + 1);
+                        }, 250);
+                    }, 250);
+                }, 250);
+            });
+        }
+
+        $("#start").click(function() { setCountdown(0); $(this).fadeOut(); return false;});
+
+        function playAlert() {
+            if (window.HTMLAudioElement) {
+              var snd = new Audio('');
+               
+              if(snd.canPlayType('audio/mp3')) {
+                snd = new Audio('alert.mp3');
+              }
+               
+              snd.play();
+            }
+        }
+    </script>
+</body>
+</html>
